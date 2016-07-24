@@ -25,13 +25,13 @@ document.querySelector('.menu-item > .icon.icon-menu').onclick = function () {
 
     whatsieSettingsItem.onclick = () => {
       const settingsDrawer = document.querySelector('.drawer.drawer-settings');
-      settingsDrawer.style.transition = 'transform 200ms ease-out';
+      settingsDrawer.style.transition = 'transform 250ms cubic-bezier(0,.8,.5,1)';
 
       const drawerContainer = settingsDrawer.parentNode;
 
       const whatsieSettingsDrawer = document.createElement('div');
       whatsieSettingsDrawer.className = 'drawer drawer-whatsie-settings';
-      whatsieSettingsDrawer.style.transition = 'transform 200ms ease-out';
+      whatsieSettingsDrawer.style.transition = 'transform 250ms cubic-bezier(0,.8,.5,1)';
       whatsieSettingsDrawer.style.transform = 'translateX(100%)';
 
       setTimeout(() => {
