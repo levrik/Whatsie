@@ -1,16 +1,6 @@
-export function inject () {
-  console.log('injecting settings');
-
+function _inject () {
   const menuButton = document.querySelector('.menu-item > .icon.icon-menu');
-
-  if (!menuButton) {
-    console.log('Application not loaded yet...');
-    setTimeout(() => {
-      console.log('Retry to inject settings');
-      inject();
-    }, 1000);
-    return;
-  }
+  if (!menuButton) return;
 
   menuButton.onclick = function () {
     function injectWhatsieSettingsItem () {
@@ -193,4 +183,29 @@ export function inject () {
       };
     });
   };
+}
+
+export function inject () {
+  const appWrapper = document.querySelector('.app-wrapper');
+  if (!appWrapper) {
+    // NOTE: do not work if timeout is lower than 1000. Strange...
+    setTimeout(() => {
+      inject();
+    }, 1000);
+    return;
+  }
+
+  // eslint-disable-next-line no-undef
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class') {
+        if (mutation.oldValue.indexOf('app-wrapper-main') === -1 && appWrapper.className.indexOf('app-wrapper-main') !== -1) {
+          _inject();
+        }
+      }
+    });
+  });
+  observer.observe(appWrapper, {attributes: true, attributeOldValue: true});
+
+  _inject();
 }
