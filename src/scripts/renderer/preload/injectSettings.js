@@ -91,12 +91,26 @@ function _inject () {
         whatsieSettingsDrawerBody.appendChild(whatsieSettingsDrawerControlsContainer);
 
         const controls = [
-          {label: 'Launch on Startup'},
-          {label: 'Start Hidden on Startup'},
-          {label: 'Open Links in Browser'}
+          {type: 'checkbox', label: 'Launch on Startup', checked: true, click: () => console.log('clicked')},
+          {type: 'checkbox', label: 'Start Hidden on Startup', checked: false},
+          {type: 'checkbox', label: 'Open Links in Browser', checked: true, hint: 'Open links in chats with your default browser'},
+          {type: 'dropdown', items: [
+            {value: 'default', label: 'Default'},
+            {value: 'faded', label: 'Faded'},
+            {value: 'pure', label: 'Pure'},
+            {value: 'grey', label: 'Grey'},
+            {value: 'dark', label: 'Dark'},
+            {value: 'numixdark', label: 'Numix Dark'},
+            {value: 'shadow', label: 'Shadow'},
+            {value: 'sephia', label: 'Sephia'},
+            {value: 'fluttershy', label: 'Fluttershy'},
+            {value: 'orange', label: 'Orange'}
+          ], value: 'default', change: () => console.log('changed')}
         ];
 
-        function createCheckboxControl (controlsSection, label, checked) {
+        function createCheckboxControl (controlsSection, label, checked, click, hint) {
+          if (click) controlsSection.onclick = click;
+
           const control = document.createElement('div');
           control.className = 'control';
 
@@ -105,7 +119,8 @@ function _inject () {
           control.appendChild(checkboxContainer);
 
           const checkbox = document.createElement('div');
-          checkbox.className = 'checkbox checked';
+          if (checked) checkbox.className = 'checkbox checked';
+          else checkbox.className = 'checkbox';
           checkboxContainer.appendChild(checkbox);
 
           const checkmark = document.createElement('div');
@@ -117,14 +132,51 @@ function _inject () {
           const labelElem = document.createElement('div');
           labelElem.className = 'label';
           labelElem.innerText = label;
+
+          if (hint) {
+            const hintElem = document.createElement('div');
+            hintElem.className = 'hint';
+            hintElem.innerText = hint;
+            labelElem.appendChild(hintElem);
+          }
+
           controlsSection.appendChild(labelElem);
+        }
+
+        function createDropdownControl (controlsSection, items, value, change) {
+          controlsSection.className += ' controls-section-wide';
+
+          const control = document.createElement('div');
+          control.className = 'select';
+
+          const select = document.createElement('select');
+          if (change) select.onchange = change;
+          control.appendChild(select);
+
+          for (let item of items) {
+            let option = document.createElement('option');
+            option.value = item.value;
+            if (item.value === value) option.selected = true;
+            option.innerText = item.label;
+            select.appendChild(option);
+          }
+
+          controlsSection.appendChild(control);
         }
 
         for (let control of controls) {
           let controlsSection = document.createElement('div');
           controlsSection.className = 'controls-section';
 
-          createCheckboxControl(controlsSection, control.label, true);
+          switch (control.type) {
+            case 'checkbox':
+              createCheckboxControl(controlsSection, control.label, control.checked, control.click, control.hint);
+              break;
+            case 'dropdown':
+            case 'select':
+              createDropdownControl(controlsSection, control.items, control.value, control.change);
+              break;
+          }
 
           whatsieSettingsDrawerControlsContainer.appendChild(controlsSection);
         }
